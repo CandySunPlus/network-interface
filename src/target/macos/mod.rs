@@ -19,11 +19,7 @@ impl NetworkInterfaceConfig for NetworkInterface {
 
         for netifa in getifaddrs()? {
             let netifa_addr = netifa.ifa_addr;
-            let netifa_family = if netifa_addr.is_null() {
-                None
-            } else {
-                Some(unsafe { (*netifa_addr).sa_family as i32 })
-            };
+            let netifa_family = unsafe { netifa_addr.as_ref() }.map(|x| x.sa_family as i32);
 
             let network_interface = match netifa_family {
                 Some(AF_LINK) => {
